@@ -36,7 +36,13 @@
         <a class="button button-ghost" href="index.html#support">원격지원</a>
         <a class="button button-primary" href="index.html#contact">견적 문의</a>
       </div>
+      <button class="menu-toggle" aria-label="메뉴 열기" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
     </div>
+    <div class="mobile-overlay"></div>
   </header>
 
   <main id="top">
@@ -127,6 +133,32 @@
       </div>
     </div>
   </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const menuToggle = document.querySelector('.menu-toggle');
+      const mobileOverlay = document.querySelector('.mobile-overlay');
+      const body = document.body;
+
+      function toggleMenu() {
+        const isOpen = body.classList.toggle('menu-open');
+        menuToggle.setAttribute('aria-expanded', isOpen);
+      }
+
+      function closeMenu() {
+        body.classList.remove('menu-open');
+        menuToggle.setAttribute('aria-expanded', 'false');
+      }
+
+      menuToggle.addEventListener('click', toggleMenu);
+      mobileOverlay.addEventListener('click', closeMenu);
+
+      // Close menu when clicking navigation links
+      document.querySelectorAll('.nav a').forEach(link => {
+        link.addEventListener('click', closeMenu);
+      });
+    });
+  </script>
 </body>
 
 </html>
