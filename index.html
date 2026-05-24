@@ -383,6 +383,12 @@
     </div>
   </footer>
 
+  <button class="scroll-to-top" aria-label="맨 위로 이동" title="맨 위로 이동">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="18 15 12 9 6 15"></polyline>
+    </svg>
+  </button>
+
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const menuToggle = document.querySelector('.menu-toggle');
@@ -405,6 +411,24 @@
       // Close menu when clicking navigation links
       document.querySelectorAll('.nav a').forEach(link => {
         link.addEventListener('click', closeMenu);
+      });
+
+      // Scroll to top button functionality
+      const scrollTopBtn = document.querySelector('.scroll-to-top');
+
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+          scrollTopBtn.classList.add('is-visible');
+        } else {
+          scrollTopBtn.classList.remove('is-visible');
+        }
+      });
+
+      scrollTopBtn.addEventListener('click', () => {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
       });
     });
   </script>
