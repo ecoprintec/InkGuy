@@ -23,7 +23,7 @@
         margin: 0;
         color: var(--ink);
         font-family:
-          -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
+          "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
           "Noto Sans KR", "Segoe UI", sans-serif;
         line-height: 1.6;
         background: var(--bg);
