@@ -7,6 +7,7 @@
   <title>잉크가이 | 프린터·복합기 임대 및 유지보수 전문기업</title>
   <meta name="description"
     content="프린터 임대, 복합기 임대, 잉크·토너 공급, 유지보수까지 한 번에 지원하는 사무기기 전문기업 잉크가이. 사용 환경에 맞는 장비와 빠른 상담을 안내합니다." />
+  <link rel="canonical" href="https://inkguy.kr/" />
   
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website" />
@@ -463,109 +464,19 @@
     </svg>
   </button>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const menuToggle = document.querySelector('.menu-toggle');
-      const mobileOverlay = document.querySelector('.mobile-overlay');
-      const body = document.body;
+  <!-- Mobile Bottom Fixed Quick CTA Bar -->
+  <div class="mobile-bottom-cta">
+    <a href="tel:031-205-9247" class="button button-secondary">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+      전화 상담
+    </a>
+    <a href="#contact" class="button button-primary">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+      견적 문의
+    </a>
+  </div>
 
-      function toggleMenu() {
-        const isOpen = body.classList.toggle('menu-open');
-        menuToggle.setAttribute('aria-expanded', isOpen);
-      }
-
-      function closeMenu() {
-        body.classList.remove('menu-open');
-        menuToggle.setAttribute('aria-expanded', 'false');
-      }
-
-      menuToggle.addEventListener('click', toggleMenu);
-      mobileOverlay.addEventListener('click', closeMenu);
-
-      // Close menu when clicking navigation links
-      document.querySelectorAll('.nav a').forEach(link => {
-        link.addEventListener('click', closeMenu);
-      });
-
-      // Scroll to top button functionality
-      const scrollTopBtn = document.querySelector('.scroll-to-top');
-
-      window.addEventListener('scroll', () => {
-        if (window.scrollY > 300) {
-          scrollTopBtn.classList.add('is-visible');
-        } else {
-          scrollTopBtn.classList.remove('is-visible');
-        }
-      });
-
-      scrollTopBtn.addEventListener('click', () => {
-        window.scrollTo({
-          top: 0,
-          behavior: 'smooth'
-        });
-      });
-
-      // Formspree 문의 폼 비동기(AJAX) 전송 및 로컬 피드백 처리
-      const form = document.querySelector('#contact form');
-      if (form) {
-        form.addEventListener('submit', async (e) => {
-          e.preventDefault();
-          
-          const submitButton = form.querySelector('button[type="submit"]');
-          const originalButtonText = submitButton.textContent;
-          submitButton.disabled = true;
-          submitButton.textContent = '전송 중...';
-
-          // 기존 메시지가 있다면 제거
-          const existingMessage = form.querySelector('.form-message');
-          if (existingMessage) {
-            existingMessage.remove();
-          }
-
-          const formData = new FormData(form);
-          try {
-            const response = await fetch(form.action, {
-              method: 'POST',
-              body: formData,
-              headers: {
-                'Accept': 'application/json'
-              }
-            });
-
-            if (response.ok) {
-              form.reset();
-              showFormMessage('success', '문의가 성공적으로 접수되었습니다! 빠른 시일 내에 연락드리겠습니다.');
-            } else {
-              const data = await response.json();
-              if (data && data.errors) {
-                showFormMessage('error', '입력 항목 오류: ' + data.errors.map(error => error.message).join(', '));
-              } else {
-                showFormMessage('error', '전송 실패: 서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
-              }
-            }
-          } catch (error) {
-            showFormMessage('error', '네트워크 연결 오류: 인터넷 연결 상태를 확인 후 다시 시도해 주세요.');
-          } finally {
-            submitButton.disabled = false;
-            submitButton.textContent = originalButtonText;
-          }
-        });
-      }
-
-      function showFormMessage(type, messageText) {
-        const messageDiv = document.createElement('div');
-        messageDiv.className = `form-message ${type}`;
-        messageDiv.textContent = messageText;
-        
-        // 폼 하단 버튼 바로 앞에 삽입
-        const submitButton = form.querySelector('button[type="submit"]');
-        form.insertBefore(messageDiv, submitButton);
-        
-        // 모바일 스크롤 지원
-        messageDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }
-    });
-  </script>
+  <script src="script.js"></script>
 </body>
 
 </html>
