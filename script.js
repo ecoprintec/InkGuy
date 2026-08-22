@@ -11,6 +11,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function toggleMenu() {
       const isOpen = body.classList.toggle('menu-open');
       menuToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      if (isOpen) {
+        document.querySelectorAll('.dropdown').forEach(dp => dp.classList.add('is-open'));
+      }
     }
 
     function closeMenu() {
@@ -21,9 +24,20 @@ document.addEventListener('DOMContentLoaded', () => {
     menuToggle.addEventListener('click', toggleMenu);
     mobileOverlay.addEventListener('click', closeMenu);
 
-    // Close menu when clicking navigation links
+    // Close menu when clicking destination navigation links (exclude dropdown trigger in mobile drawer)
     document.querySelectorAll('.nav a').forEach(link => {
-      link.addEventListener('click', closeMenu);
+      link.addEventListener('click', (e) => {
+        const dropdownParent = link.closest('.dropdown');
+        const isDropdownTrigger = dropdownParent && link === dropdownParent.querySelector(':scope > a');
+
+        if (window.innerWidth <= 980 && isDropdownTrigger) {
+          e.preventDefault();
+          dropdownParent.classList.toggle('is-open');
+          return;
+        }
+
+        closeMenu();
+      });
     });
 
     // Close menu with ESC key
@@ -119,5 +133,68 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     messageDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  // 4. Auto-select Service in Contact Form based on URL parameter or link context
+  const serviceSelect = document.querySelector('#service');
+  if (serviceSelect) {
+    const serviceMap = {
+      'printer': '프린터 임대',
+      'copier': '복합기 임대',
+      'supplies': '잉크·토너 공급',
+      'maintenance': '유지보수 | A/S',
+      'remote': '원격지원',
+      'support': '원격지원'
+    };
+
+    function selectServiceOption(serviceKey) {
+      if (!serviceKey) return;
+      const targetText = serviceMap[serviceKey.toLowerCase()] || serviceKey;
+      for (let i = 0; i < serviceSelect.options.length; i++) {
+        const opt = serviceSelect.options[i];
+        if (opt.text.includes(targetText) || opt.value.includes(targetText)) {
+          serviceSelect.selectedIndex = i;
+          serviceSelect.dispatchEvent(new Event('change'));
+          // Visual focus and highlight feedback
+          serviceSelect.style.borderColor = 'var(--primary)';
+          serviceSelect.style.boxShadow = '0 0 0 3px rgba(22, 93, 255, 0.2)';
+          setTimeout(() => {
+            serviceSelect.style.borderColor = '';
+            serviceSelect.style.boxShadow = '';
+          }, 1800);
+          break;
+        }
+      }
+    }
+
+    // Check URL query parameters or hash on initial load
+    const urlParams = new URLSearchParams(window.location.search);
+    let serviceParam = urlParams.get('service');
+    if (!serviceParam && window.location.hash.includes('service=')) {
+      const hashQuery = window.location.hash.split('?')[1];
+      if (hashQuery) {
+        const hashParams = new URLSearchParams(hashQuery);
+        serviceParam = hashParams.get('service');
+      }
+    }
+
+    if (serviceParam) {
+      selectServiceOption(serviceParam);
+    }
+
+    // In-page CTA buttons with service intent
+    document.querySelectorAll('a[href*="service="], #support a[href="#contact"]').forEach(cta => {
+      cta.addEventListener('click', () => {
+        const href = cta.getAttribute('href') || '';
+        if (href.includes('service=')) {
+          const match = href.match(/service=([a-zA-Z0-9_\-]+)/);
+          if (match && match[1]) {
+            selectServiceOption(match[1]);
+          }
+        } else if (cta.closest('#support')) {
+          selectServiceOption('maintenance');
+        }
+      });
+    });
   }
 });

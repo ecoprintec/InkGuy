@@ -718,37 +718,72 @@
         }
 
         .nav .dropdown > a {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
           font-weight: 700;
+          cursor: pointer;
+        }
+
+        .nav .dropdown > a::after {
+          content: '';
+          display: inline-block;
+          width: 8px;
+          height: 8px;
+          border-right: 2px solid var(--muted);
+          border-bottom: 2px solid var(--muted);
+          transform: rotate(45deg);
+          transition: transform 0.25s ease, border-color 0.2s ease;
+          margin-right: 6px;
+        }
+
+        .nav .dropdown.is-open > a::after {
+          transform: rotate(-135deg);
+          border-color: var(--primary);
         }
 
         .nav .dropdown-content {
-          display: block !important;
+          display: none;
           position: static;
           box-shadow: none;
           border: none;
           background: transparent;
-          padding: 6px 0 0 16px;
+          padding: 4px 0 2px 14px;
           margin-top: 0;
           min-width: unset;
         }
 
+        /* Default open inside mobile drawer or open on toggle */
+        .nav .dropdown.is-open .dropdown-content {
+          display: block !important;
+          animation: drawerSubmenuFade 0.2s ease;
+        }
+
+        @keyframes drawerSubmenuFade {
+          from {
+            opacity: 0;
+            transform: translateY(-4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
         .nav .dropdown-content a {
-          font-size: 14px;
+          font-size: 15px;
           color: var(--muted);
           padding: 8px 0;
           font-weight: 600;
         }
 
-        .nav .dropdown::after {
-          display: none;
+        .nav .dropdown-content a:hover {
+          color: var(--primary);
+          background: transparent;
         }
 
-        /* Group actions and toggle on the right for tablet */
-        @media (min-width: 641px) {
-          .header-actions {
-            margin-left: auto;
-            margin-right: 12px;
-          }
+        .nav .dropdown::after {
+          display: none;
         }
 
         /* Mobile overlay backing */
