@@ -297,77 +297,10 @@
         }
       }
 
-      .printer-illustration {
-        min-height: 360px;
-        padding: 28px;
-        background: linear-gradient(180deg, #f9fbff 0%, #edf4ff 100%);
-        border: 1px solid #dce7ff;
-        border-radius: 28px;
-      }
-
-      .printer-body {
-        position: relative;
-        width: 100%;
-        max-width: 360px;
-        margin: 72px auto 0;
-        padding: 28px 28px 34px;
-        background: #fff;
-        border: 2px solid #d9e3f5;
-        border-radius: 24px;
-        box-shadow: 0 22px 45px rgba(34, 67, 120, 0.13);
-      }
-
-      .printer-top {
-        position: absolute;
-        left: 50%;
-        top: -62px;
-        width: 70%;
-        height: 76px;
-        background: #dfe9fb;
-        border: 2px solid #cbd8ee;
-        border-radius: 18px 18px 10px 10px;
-        transform: translateX(-50%);
-      }
-
-      .printer-screen {
-        width: 72px;
-        height: 42px;
-        margin-left: auto;
-        background: #163b78;
-        border-radius: 10px;
-      }
-
-      .paper {
-        width: 74%;
-        height: 92px;
-        margin: 28px auto 0;
-        padding: 16px;
-        background: #f8fbff;
-        border: 2px solid #d9e3f5;
-        border-radius: 8px;
-      }
-
-      .paper span {
-        display: block;
-        height: 8px;
-        margin-bottom: 10px;
-        background: #c5d6f1;
-        border-radius: 999px;
-      }
-
-      .paper span:nth-child(2) {
-        width: 72%;
-      }
-
-      .paper span:nth-child(3) {
-        width: 48%;
-      }
-
       .stats-grid,
       .card-grid,
       .pricing-grid,
-      .setup-grid,
-      .faq-grid {
+      .setup-grid {
         display: grid;
         gap: 18px;
       }
@@ -377,8 +310,7 @@
       }
 
       .card-grid,
-      .setup-grid,
-      .faq-grid {
+      .setup-grid {
         grid-template-columns: repeat(4, 1fr);
       }
 
@@ -390,7 +322,6 @@
       .stat,
       .price-card,
       .setup-card,
-      .faq-card,
       .process-step {
         background: var(--card);
         border: 1px solid var(--line);
@@ -402,14 +333,12 @@
       .card,
       .stat,
       .price-card,
-      .setup-card,
-      .faq-card {
+      .setup-card {
         padding: 26px;
       }
 
       .price-card:hover,
       .setup-card:hover,
-      .faq-card:hover,
       .process-step:hover {
         transform: translateY(-6px);
         box-shadow: 0 22px 48px rgba(23, 32, 51, 0.08);
@@ -430,8 +359,7 @@
       }
 
       .card p,
-      .setup-card p,
-      .faq-card p {
+      .setup-card p {
         margin-bottom: 0;
       }
 
@@ -492,49 +420,6 @@
         font-weight: 900;
       }
 
-      .setup-visual {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 130px;
-        margin-bottom: 20px;
-        background: var(--accent);
-        border-radius: 18px;
-      }
-
-      .mini-printer {
-        width: 92px;
-        height: 62px;
-        position: relative;
-        background: #fff;
-        border: 2px solid #c7d7f2;
-        border-radius: 14px;
-        box-shadow: 0 12px 24px rgba(22, 93, 255, 0.12);
-      }
-
-      .mini-printer::before {
-        content: "";
-        position: absolute;
-        left: 17px;
-        top: -26px;
-        width: 58px;
-        height: 34px;
-        background: #dce8fb;
-        border: 2px solid #c7d7f2;
-        border-radius: 10px 10px 4px 4px;
-      }
-
-      .mini-printer::after {
-        content: "";
-        position: absolute;
-        left: 20px;
-        bottom: -28px;
-        width: 52px;
-        height: 36px;
-        background: #fff;
-        border: 2px solid #c7d7f2;
-        border-radius: 6px;
-      }
 
       .support-panel,
       .contact-panel {
@@ -818,7 +703,6 @@
         .stats-grid,
         .card-grid,
         .setup-grid,
-        .faq-grid,
         .pricing-grid {
           grid-template-columns: repeat(2, 1fr);
         }
@@ -864,7 +748,6 @@
         .stats-grid,
         .card-grid,
         .setup-grid,
-        .faq-grid,
         .pricing-grid,
         .process-grid,
         .form-grid {
