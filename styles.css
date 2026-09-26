@@ -17,6 +17,7 @@
 
       html {
         scroll-behavior: smooth;
+        scroll-padding-top: 84px;
       }
 
       body {
@@ -1169,7 +1170,7 @@ a.card:hover h3 {
 
 @media (max-width: 768px) {
   body {
-    padding-bottom: 68px;
+    padding-bottom: calc(68px + env(safe-area-inset-bottom, 0px));
   }
 
   .mobile-bottom-cta {
@@ -1182,7 +1183,7 @@ a.card:hover h3 {
     background: rgba(255, 255, 255, 0.96);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    padding: 10px 14px;
+    padding: 10px 14px calc(10px + env(safe-area-inset-bottom, 0px));
     gap: 8px;
     border-top: 1px solid rgba(0, 0, 0, 0.08);
     box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.08);
@@ -1203,7 +1204,7 @@ a.card:hover h3 {
   }
 
   .scroll-to-top {
-    bottom: 78px;
+    bottom: calc(78px + env(safe-area-inset-bottom, 0px));
   }
 }
 

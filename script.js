@@ -183,10 +183,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // In-page CTA buttons with service intent
-    document.querySelectorAll('a[href*="service="], #support a[href="#contact"]').forEach(cta => {
+    document.querySelectorAll('a[href*="service="], a[data-service], #support a[href*="#contact"]').forEach(cta => {
       cta.addEventListener('click', () => {
+        const dataService = cta.getAttribute('data-service');
         const href = cta.getAttribute('href') || '';
-        if (href.includes('service=')) {
+        if (dataService) {
+          selectServiceOption(dataService);
+        } else if (href.includes('service=')) {
           const match = href.match(/service=([a-zA-Z0-9_\-]+)/);
           if (match && match[1]) {
             selectServiceOption(match[1]);
