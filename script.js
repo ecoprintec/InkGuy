@@ -234,4 +234,35 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
   }
+
+  // 5. Dark Mode Theme Toggle
+  const themeToggles = document.querySelectorAll('.theme-toggle');
+
+  function getPreferredTheme() {
+    return localStorage.getItem('inkguy-theme') || 'light';
+  }
+
+  function applyTheme(theme, save = true) {
+    document.documentElement.setAttribute('data-theme', theme);
+    if (save) {
+      localStorage.setItem('inkguy-theme', theme);
+    }
+    themeToggles.forEach(toggle => {
+      const isDark = theme === 'dark';
+      toggle.setAttribute('aria-label', isDark ? '라이트 모드로 전환' : '다크 모드로 전환');
+      toggle.setAttribute('title', isDark ? '라이트 모드로 전환' : '다크 모드로 전환');
+      toggle.setAttribute('aria-pressed', isDark ? 'true' : 'false');
+    });
+  }
+
+  // Initialize theme (default to light mode unless explicitly saved)
+  applyTheme(getPreferredTheme(), !!localStorage.getItem('inkguy-theme'));
+
+  themeToggles.forEach(toggle => {
+    toggle.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      applyTheme(newTheme, true);
+    });
+  });
 });
