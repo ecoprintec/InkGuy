@@ -71,11 +71,18 @@ document.addEventListener('DOMContentLoaded', () => {
   // 3. Formspree AJAX Contact Form Handling
   const form = document.querySelector('#contact form');
   if (form) {
+    let isCooldown = false;
+    let cooldownTimer = null;
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
+      if (isCooldown) {
+        return;
+      }
+
       const submitButton = form.querySelector('button[type="submit"]');
-      const originalButtonText = submitButton ? submitButton.textContent : '전송';
+      const originalButtonText = submitButton ? submitButton.textContent.trim() : '문의하기';
 
       if (submitButton) {
         submitButton.disabled = true;
@@ -101,17 +108,44 @@ document.addEventListener('DOMContentLoaded', () => {
         if (response.ok) {
           form.reset();
           showFormMessage(form, 'success', '문의가 성공적으로 접수되었습니다! 빠른 시일 내에 연락드리겠습니다.');
+          startCooldown(10);
         } else {
-          const data = await response.json();
+          const data = await response.json().catch(() => null);
           if (data && data.errors) {
             showFormMessage(form, 'error', '입력 항목 오류: ' + data.errors.map(err => err.message).join(', '));
           } else {
             showFormMessage(form, 'error', '전송 실패: 서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
           }
+          resetButton();
         }
       } catch (error) {
         showFormMessage(form, 'error', '네트워크 연결 오류: 인터넷 연결 상태를 확인 후 다시 시도해 주세요.');
-      } finally {
+        resetButton();
+      }
+
+      function startCooldown(seconds) {
+        isCooldown = true;
+        let remaining = seconds;
+        if (submitButton) {
+          submitButton.disabled = true;
+          submitButton.textContent = `재문의 대기 중 (${remaining}초)`;
+
+          if (cooldownTimer) clearInterval(cooldownTimer);
+          cooldownTimer = setInterval(() => {
+            remaining -= 1;
+            if (remaining > 0) {
+              submitButton.textContent = `재문의 대기 중 (${remaining}초)`;
+            } else {
+              clearInterval(cooldownTimer);
+              cooldownTimer = null;
+              resetButton();
+            }
+          }, 1000);
+        }
+      }
+
+      function resetButton() {
+        isCooldown = false;
         if (submitButton) {
           submitButton.disabled = false;
           submitButton.textContent = originalButtonText;
