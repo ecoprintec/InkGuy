@@ -1,5 +1,5 @@
 /**
- * InkGuy - Main Interactive JavaScript Module
+ * INKGUY - Main Interactive JavaScript Module
  */
 document.addEventListener('DOMContentLoaded', () => {
   // 1. Mobile Menu Drawer Navigation
