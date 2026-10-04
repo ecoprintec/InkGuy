@@ -58,10 +58,10 @@
         INKGUY
         <small>프린터 · 복합기 · 소모품 · 유지보수</small>
       </a>
-      <nav class="nav" aria-label="주요 메뉴">
+      <nav class="nav" id="primary-navigation" aria-label="주요 메뉴">
         <div class="dropdown">
-          <a href="index.html#services">서비스</a>
-          <div class="dropdown-content">
+          <a href="index.html#services" aria-expanded="false" aria-controls="services-submenu">서비스</a>
+          <div class="dropdown-content" id="services-submenu">
             <a href="printer.html">프린터 임대</a>
             <a href="copier.html">복합기 임대</a>
             <a href="supplies.html">잉크·토너 공급</a>
@@ -73,7 +73,7 @@
         <a href="index.html#recommended-setups">추천 구성</a>
         <a href="index.html#contact">문의하기</a>
         <div class="mobile-nav-actions">
-          <a class="button button-ghost" href="index.html#support">원격지원</a>
+          <a class="button button-ghost" href="https://remotedesktop.google.com/support" target="_blank" rel="noopener noreferrer">원격지원</a>
           <a class="button button-primary" href="index.html?service=copier#contact">견적 문의</a>
         </div>
       </nav>
@@ -96,7 +96,7 @@
             <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
           </svg>
         </button>
-        <a class="button button-ghost" href="index.html#support">원격지원</a>
+        <a class="button button-ghost" href="https://remotedesktop.google.com/support" target="_blank" rel="noopener noreferrer">원격지원</a>
         <a class="button button-primary" href="index.html?service=copier#contact">견적 문의</a>
       </div>
       <div class="mobile-header-tools">
@@ -118,7 +118,7 @@
             <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
           </svg>
         </button>
-        <button class="menu-toggle" aria-label="메뉴 열기" aria-expanded="false">
+        <button class="menu-toggle" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="primary-navigation">
           <span></span>
           <span></span>
           <span></span>

@@ -8,17 +8,25 @@ document.addEventListener('DOMContentLoaded', () => {
   const body = document.body;
 
   if (menuToggle && mobileOverlay) {
-    function toggleMenu() {
-      const isOpen = body.classList.toggle('menu-open');
+    const dropdowns = document.querySelectorAll('.nav .dropdown');
+
+    function setMenuState(isOpen) {
+      body.classList.toggle('menu-open', isOpen);
       menuToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-      if (isOpen) {
-        document.querySelectorAll('.dropdown').forEach(dp => dp.classList.add('is-open'));
-      }
+      menuToggle.setAttribute('aria-label', isOpen ? '메뉴 닫기' : '메뉴 열기');
+      dropdowns.forEach(dropdown => {
+        dropdown.classList.remove('is-open');
+        const trigger = dropdown.querySelector(':scope > a');
+        if (trigger) trigger.setAttribute('aria-expanded', 'false');
+      });
+    }
+
+    function toggleMenu() {
+      setMenuState(!body.classList.contains('menu-open'));
     }
 
     function closeMenu() {
-      body.classList.remove('menu-open');
-      menuToggle.setAttribute('aria-expanded', 'false');
+      setMenuState(false);
     }
 
     menuToggle.addEventListener('click', toggleMenu);
@@ -32,11 +40,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (window.innerWidth <= 980 && isDropdownTrigger) {
           e.preventDefault();
-          dropdownParent.classList.toggle('is-open');
+          const isExpanded = dropdownParent.classList.toggle('is-open');
+          link.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
           return;
         }
 
-        closeMenu();
+        if (window.innerWidth <= 980) closeMenu();
       });
     });
 
@@ -44,7 +53,12 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && body.classList.contains('menu-open')) {
         closeMenu();
+        menuToggle.focus();
       }
+    });
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 980 && body.classList.contains('menu-open')) closeMenu();
     });
   }
 

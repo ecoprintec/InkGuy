@@ -727,7 +727,8 @@ textarea {
     justify-content: flex-start;
     padding: 34px 24px;
     gap: 22px;
-    transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    visibility: hidden;
+    transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0.3s;
     overflow-y: auto;
     box-shadow: -10px 0 40px rgba(23, 32, 51, 0.1);
     z-index: 99;
@@ -749,6 +750,8 @@ textarea {
 
   body.menu-open .nav {
     right: 0;
+    visibility: visible;
+    transition-delay: 0s;
   }
 
   body.menu-open {
