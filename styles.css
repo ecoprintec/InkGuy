@@ -670,6 +670,16 @@ textarea:focus {
   box-shadow: 0 0 0 3px var(--primary-glow);
 }
 
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 3px;
+}
+
 textarea {
   min-height: 128px;
   resize: vertical;
@@ -1007,8 +1017,11 @@ a.card:hover h3 {
   color: var(--primary);
 }
 
-.dropdown:hover .dropdown-content {
-  display: block;
+@media (min-width: 981px) {
+  .dropdown:hover .dropdown-content,
+  .dropdown:focus-within .dropdown-content {
+    display: block;
+  }
 }
 
 .dropdown::after {
@@ -1038,15 +1051,34 @@ a.card:hover h3 {
   z-index: 90;
   opacity: 0;
   pointer-events: none;
+  visibility: hidden;
   transform: translateY(15px);
-  transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0.3s, background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
   box-shadow: var(--shadow);
 }
 
 .scroll-to-top.is-visible {
   opacity: 1;
   pointer-events: auto;
+  visibility: visible;
   transform: translateY(0);
+  transition-delay: 0s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+  }
 }
 
 .scroll-to-top:hover {

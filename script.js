@@ -5,15 +5,17 @@ document.addEventListener('DOMContentLoaded', () => {
   // 1. Mobile Menu Drawer Navigation
   const menuToggle = document.querySelector('.menu-toggle');
   const mobileOverlay = document.querySelector('.mobile-overlay');
+  const nav = document.querySelector('.nav');
   const body = document.body;
 
-  if (menuToggle && mobileOverlay) {
+  if (menuToggle && mobileOverlay && nav) {
     const dropdowns = document.querySelectorAll('.nav .dropdown');
 
     function setMenuState(isOpen) {
       body.classList.toggle('menu-open', isOpen);
       menuToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
       menuToggle.setAttribute('aria-label', isOpen ? '메뉴 닫기' : '메뉴 열기');
+      mobileOverlay.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
       dropdowns.forEach(dropdown => {
         dropdown.classList.remove('is-open');
         const trigger = dropdown.querySelector(':scope > a');
@@ -22,15 +24,42 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function toggleMenu() {
-      setMenuState(!body.classList.contains('menu-open'));
+      const shouldOpen = !body.classList.contains('menu-open');
+      setMenuState(shouldOpen);
+      if (shouldOpen) {
+        requestAnimationFrame(() => {
+          const firstLink = nav.querySelector('a[href]');
+          if (firstLink) firstLink.focus();
+        });
+      }
     }
 
-    function closeMenu() {
+    function closeMenu(restoreFocus = false) {
       setMenuState(false);
+      if (restoreFocus) menuToggle.focus();
     }
 
     menuToggle.addEventListener('click', toggleMenu);
-    mobileOverlay.addEventListener('click', closeMenu);
+    mobileOverlay.addEventListener('click', () => closeMenu(true));
+
+    const serviceTriggers = [...dropdowns].map(dropdown => dropdown.querySelector(':scope > a')).filter(Boolean);
+    dropdowns.forEach(dropdown => {
+      const trigger = dropdown.querySelector(':scope > a');
+      dropdown.addEventListener('mouseenter', () => {
+        if (window.innerWidth > 980 && trigger) trigger.setAttribute('aria-expanded', 'true');
+      });
+      dropdown.addEventListener('mouseleave', () => {
+        if (window.innerWidth > 980 && trigger) trigger.setAttribute('aria-expanded', 'false');
+      });
+      dropdown.addEventListener('focusin', () => {
+        if (window.innerWidth > 980 && trigger) trigger.setAttribute('aria-expanded', 'true');
+      });
+      dropdown.addEventListener('focusout', event => {
+        if (window.innerWidth > 980 && !dropdown.contains(event.relatedTarget) && trigger) {
+          trigger.setAttribute('aria-expanded', 'false');
+        }
+      });
+    });
 
     // Close menu when clicking destination navigation links (exclude dropdown trigger in mobile drawer)
     document.querySelectorAll('.nav a').forEach(link => {
@@ -45,39 +74,90 @@ document.addEventListener('DOMContentLoaded', () => {
           return;
         }
 
-        if (window.innerWidth <= 980) closeMenu();
+        if (window.innerWidth <= 980) {
+          const destination = new URL(link.href, window.location.href);
+          const isSamePageAnchor = destination.origin === window.location.origin &&
+            destination.pathname === window.location.pathname &&
+            destination.search === window.location.search && destination.hash;
+          closeMenu(!isSamePageAnchor);
+
+          if (isSamePageAnchor) {
+            const target = document.getElementById(decodeURIComponent(destination.hash.slice(1)));
+            if (target) {
+              if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');
+              requestAnimationFrame(() => target.focus({ preventScroll: true }));
+            }
+          }
+        }
       });
     });
 
-    // Close menu with ESC key
+    // Keep keyboard focus within the open mobile drawer and close it with Escape.
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && body.classList.contains('menu-open')) {
-        closeMenu();
-        menuToggle.focus();
+        closeMenu(true);
+        return;
+      }
+
+      if (e.key === 'Tab' && body.classList.contains('menu-open')) {
+        const focusableElements = [
+          ...nav.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'),
+          menuToggle
+        ].filter(element => element.getClientRects().length > 0 && element.getAttribute('aria-hidden') !== 'true');
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+
+        if (firstElement && lastElement && e.shiftKey && document.activeElement === firstElement) {
+          e.preventDefault();
+          lastElement.focus();
+        } else if (firstElement && lastElement && !e.shiftKey && document.activeElement === lastElement) {
+          e.preventDefault();
+          firstElement.focus();
+        }
       }
     });
 
     window.addEventListener('resize', () => {
       if (window.innerWidth > 980 && body.classList.contains('menu-open')) closeMenu();
     });
+
+    // Keep the service trigger's expanded state aligned when the desktop menu opens by focus.
+    serviceTriggers.forEach(trigger => {
+      trigger.addEventListener('keydown', event => {
+        if (window.innerWidth > 980 && (event.key === 'ArrowDown' || event.key === 'Enter' || event.key === ' ')) {
+          const submenu = document.getElementById(trigger.getAttribute('aria-controls'));
+          const firstLink = submenu && submenu.querySelector('a[href]');
+          if (firstLink && event.key !== 'Enter') {
+            event.preventDefault();
+            trigger.setAttribute('aria-expanded', 'true');
+            firstLink.focus();
+          }
+        }
+      });
+    });
+
+    setMenuState(false);
   }
 
   // 2. Scroll to Top Floating Button
   const scrollTopBtn = document.querySelector('.scroll-to-top');
 
   if (scrollTopBtn) {
-    window.addEventListener('scroll', () => {
+    function updateScrollTopVisibility() {
       if (window.scrollY > 300) {
         scrollTopBtn.classList.add('is-visible');
       } else {
         scrollTopBtn.classList.remove('is-visible');
       }
-    }, { passive: true });
+    }
+
+    window.addEventListener('scroll', updateScrollTopVisibility, { passive: true });
+    updateScrollTopVisibility();
 
     scrollTopBtn.addEventListener('click', () => {
       window.scrollTo({
         top: 0,
-        behavior: 'smooth'
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
       });
     });
   }
@@ -143,12 +223,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (submitButton) {
           submitButton.disabled = true;
           submitButton.textContent = `재문의 대기 중 (${remaining}초)`;
+          submitButton.setAttribute('aria-label', `재문의 대기 중, ${remaining}초`);
 
           if (cooldownTimer) clearInterval(cooldownTimer);
           cooldownTimer = setInterval(() => {
             remaining -= 1;
             if (remaining > 0) {
               submitButton.textContent = `재문의 대기 중 (${remaining}초)`;
+              submitButton.setAttribute('aria-label', `재문의 대기 중, ${remaining}초`);
             } else {
               clearInterval(cooldownTimer);
               cooldownTimer = null;
@@ -163,6 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (submitButton) {
           submitButton.disabled = false;
           submitButton.textContent = originalButtonText;
+          submitButton.removeAttribute('aria-label');
         }
       }
     });
@@ -172,6 +255,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const messageDiv = document.createElement('div');
     messageDiv.className = `form-message ${type}`;
     messageDiv.textContent = messageText;
+    messageDiv.setAttribute('role', type === 'error' ? 'alert' : 'status');
+    messageDiv.setAttribute('aria-live', type === 'error' ? 'assertive' : 'polite');
+    messageDiv.setAttribute('aria-atomic', 'true');
 
     const submitButton = targetForm.querySelector('button[type="submit"]');
     if (submitButton) {
@@ -180,7 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
       targetForm.appendChild(messageDiv);
     }
 
-    messageDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    messageDiv.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest' });
   }
 
   // 4. Auto-select Service in Contact Form based on URL parameter or link context
